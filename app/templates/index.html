@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Telegram Promo Manager</title><link rel="stylesheet" href="/static/style.css"></head><body>
+<header><h1>Telegram Promo Manager</h1><span>Local admin console</span></header><main>
+<section><h2>Dashboard</h2><div id="dash" class="cards"></div><h3>Recent activity</h3><div id="events" class="log"></div></section>
+<section><h2>Accounts</h2><div id="accounts"></div>
+<div class="row"><input id="an" placeholder="Name (e.g. promo1)"><input id="ap" placeholder="+91..."><button onclick="addAcc()">Send code</button></div>
+<div class="row"><input id="ac" placeholder="Login code"><input id="apw" type="password" placeholder="2FA password (if asked)"><button onclick="verify()">Verify (uses name above)</button></div></section>
+<section><h2>Broadcast</h2>
+<label>Message sent to every enabled group each cycle</label><textarea id="bmsg" rows="4"></textarea>
+<div class="row"><span>Repeat every</span><input id="bval" type="number" min="0" step="any"><select id="bunit"><option>seconds</option><option>minutes</option><option>hours</option></select><button onclick="saveB()">Save</button></div>
+<div class="row"><button onclick="ctl('start')">Start</button><button onclick="ctl('pause')">Pause</button><button onclick="ctl('resume')">Resume</button><button class="d" onclick="ctl('stop')">Stop</button></div>
+<p class="hint">One cycle sends to all enabled groups, then waits the delay. "Send test" does not affect the schedule.</p>
+<h3>Destination groups</h3><div class="row"><select id="sel"></select><button onclick="loadDialogs()">Load / refresh groups</button><button onclick="addSel()">Add selected</button></div>
+<div id="dialogs" class="chips"></div><div id="groups"></div></section>
+<section><h2>AI &amp; Settings</h2>
+<div class="row"><label class="inline"><input type="checkbox" id="ai"> AI auto-reply</label><label class="inline"><input type="checkbox" id="gon"> Send greeting to new users</label></div>
+<label>Global greeting</label><textarea id="greeting" rows="2"></textarea>
+<label>AI system prompt</label><textarea id="prompt" rows="9"></textarea><button onclick="$('prompt').value=S.default_prompt">Reset prompt to default</button>
+<div class="row"><input id="url" placeholder="Ollama URL"><input id="model" placeholder="Model"><input id="hist" type="number" min="1" placeholder="History limit"></div>
+<p class="hint" id="key"></p>
+<div class="row"><button onclick="saveS()">Save settings</button><button onclick="testO('test')">Test connection</button><button onclick="testO('test-model')">Test model</button><span id="ostat"></span></div></section>
+<section><h2>Conversations</h2><div id="convs"></div><pre id="conv" class="log"></pre></section>
+</main><script src="/static/app.js"></script></body></html>
