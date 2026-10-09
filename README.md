@@ -14,7 +14,7 @@ Local-first admin console for Telegram **user-account** automation: schedule one
 | ![Broadcast flow](docs/images/broadcast-flow.png) | ![DM flow](docs/images/dm-ai-flow.png) |
 
 ## Built with
-Python · [FastAPI](https://fastapi.tiangolo.com) + Uvicorn · [Telethon](https://docs.telethon.dev) (Telegram MTProto) · [httpx](https://www.python-httpx.org) · [Ollama](https://ollama.com) (`gpt-oss:20b` by default) · Jinja2 · vanilla HTML/CSS/JS · JSON file storage.
+Python · [FastAPI](https://fastapi.tiangolo.com) + Uvicorn · [Telethon](https://docs.telethon.dev) (Telegram MTProto) · [httpx](https://www.python-httpx.org) · [Ollama](https://ollama.com) (`gpt-oss:20b-cloud` by default) · Jinja2 · vanilla HTML/CSS/JS · JSON file storage.
 
 ## Setup
 ```
