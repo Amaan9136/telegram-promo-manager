@@ -1,7 +1,7 @@
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const api=async(m,u,b)=>{const r=await fetch(u,{method:m,headers:{'Content-Type':'application/json'},body:b?JSON.stringify(b):undefined});
- const j=await r.json().catch(()=>({}));if(!r.ok){alert(j.detail||r.statusText);throw new Error(j.detail||r.statusText)}return j};
+let P=0;const api=async(m,u,b)=>{P++;try{const r=await fetch(u,{method:m,headers:{'Content-Type':'application/json'},body:b?JSON.stringify(b):undefined});
+ const j=await r.json().catch(()=>({}));if(!r.ok){alert(j.detail||r.statusText);throw new Error(j.detail||r.statusText)}return j}finally{P--}};
 const tm=x=>x?new Date(x*1000).toLocaleString():'—';
 const fmt=s=>{for(const[u,n]of[['hours',3600],['minutes',60]])if(s%n===0)return `${s/n} ${u}`;return `${s} seconds`};
 let S,first=true;
@@ -43,4 +43,5 @@ async function convs(){const l=await api('GET','/api/conversations');
 async function openConv(k){const c=await api('GET','/api/conversations/'+k);
  $('conv').innerHTML=`<button onclick="toggleAI('${k}',${!c.ai_enabled})">${c.ai_enabled?'Disable':'Enable'} AI for this user</button>\n`+c.messages.map(m=>`[${tm(m.t)}] ${esc(m.role)}${m.kind!=='message'?' ('+esc(m.kind)+')':''}: ${esc(m.text)}`).join('\n')}
 async function toggleAI(k,v){await api('PUT','/api/conversations/'+k,{ai_enabled:v});openConv(k);convs()}
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;b.classList.add('clicked');b.disabled=true;const w=()=>P?setTimeout(w,150):(b.disabled=false,b.classList.remove('clicked'));setTimeout(w,0)});
 load();convs();setInterval(()=>{load().catch(()=>{});convs().catch(()=>{})},5000);

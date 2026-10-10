@@ -6,6 +6,8 @@ log = logging.getLogger("tg")
 clients: dict[str, TelegramClient] = {}
 pending: dict[str, tuple] = {}  # account -> (phone, phone_code_hash)
 NAME_RE = re.compile(r"^[A-Za-z0-9_-]{1,32}$")
+hits: dict[str, list] = {}
+mute: dict[str, float] = {}
 
 def _client(name):
     if name not in clients:
@@ -101,6 +103,11 @@ async def on_dm(name, ev):
                "name": " ".join(filter(None, [getattr(sender, "first_name", None), getattr(sender, "last_name", None)]))}
         key = f"{name}:{who['id']}"
         new, conv_ai, s, hist = _add(key, who, "user", ev.raw_text)
+        now = time.time()
+        if mute.get(key, 0) > now: return
+        hits[key] = [t for t in hits.get(key, []) if now - t < 60] + [now]
+        if len(hits[key]) > 3:
+            mute[key] = now + 120; hits[key] = []; store.log_event("info", f"Rate limit: no replies to {key} for 2 minutes"); return
         if new and s["greeting_enabled"] and s["greeting"]:
             await ev.respond(s["greeting"]); _add(key, who, "assistant", s["greeting"], "greeting")
         if s["ai_enabled"] and conv_ai:

@@ -12,3 +12,5 @@ label{display:block;margin:10px 0 4px;color:var(--mut)}label.inline{display:flex
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}.card{background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:10px}
 .card b{display:block;color:var(--mut);font-weight:400;font-size:12px}.log{font-size:13px;color:var(--mut);white-space:pre-wrap;max-height:240px;overflow:auto}.ok{color:#3fb950}
 h3{font-size:14px;margin:14px 0 4px}.conv{padding:6px 0;border-bottom:1px solid var(--bd);cursor:pointer}
+button:active:not(:disabled){transform:translateY(1px)}button.on{pointer-events:none}
+button:disabled,button.clicked{background:var(--bd);color:var(--mut);cursor:not-allowed;box-shadow:none;opacity:.7}
