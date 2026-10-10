@@ -16,7 +16,7 @@ DEFAULT = {
               "ai_enabled": True, "model": "", "ollama_url": "", "history_limit": 20},
  "broadcast": {"message": "", "delay_seconds": 600, "enabled": False, "paused": False, "next_run": None,
                "last_run": None, "last_status": "", "last_error": ""},
- "accounts": [], "groups": [], "conversations": {}, "events": []}
+ "accounts": [], "groups": [], "conversations": {}}
 _lock = threading.RLock()
 
 def _fresh():
@@ -34,7 +34,7 @@ def _read():
         log.error("store.json unreadable (%s); moved to %s and starting fresh", e, bak)
         try: os.replace(config.DATA_FILE, bak)
         except OSError: pass
-        d = _fresh(); d["events"].append({"t": time.time(), "level": "error", "msg": f"store.json was corrupt; backup at {bak}"})
+        d = _fresh(); event(d, "error", f"store.json was corrupt; backup at {bak}")
         return d
     for k, v in _fresh().items():
         if isinstance(v, dict) and isinstance(d.get(k), dict): d[k] = {**v, **d[k]}
@@ -54,8 +54,20 @@ def mutate(fn):
         os.replace(tmp, config.DATA_FILE)
         return r
 
+def events():
+    with _lock:
+        try:
+            with open(config.LOG_FILE, encoding="utf-8") as f: l = json.load(f)
+            return l if isinstance(l, list) else []
+        except (ValueError, OSError): return []
+
 def event(d, level, msg):
     getattr(log, "error" if level == "error" else "info")(msg)
-    d["events"] = ([{"t": time.time(), "level": level, "msg": msg}] + d["events"])[:50]
+    with _lock:
+        l = ([{"t": time.time(), "level": level, "msg": msg}] + events())[:50]
+        os.makedirs(os.path.dirname(config.LOG_FILE) or ".", exist_ok=True)
+        tmp = config.LOG_FILE + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f: json.dump(l, f, indent=1, ensure_ascii=False)
+        os.replace(tmp, config.LOG_FILE)
 
-def log_event(level, msg): mutate(lambda d: event(d, level, msg))
+def log_event(level, msg): event(None, level, msg)

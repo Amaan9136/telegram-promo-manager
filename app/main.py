@@ -40,7 +40,7 @@ async def state():
     d = store.load()
     accs = [{**a, "status": await tg.status(a["name"])} for a in d["accounts"]]
     return {"settings": d["settings"], "broadcast": d["broadcast"], "accounts": accs, "groups": d["groups"],
-            "events": d["events"][:25], "default_prompt": store.DEFAULT_PROMPT, "ollama_key_set": bool(config.OLLAMA_API_KEY)}
+            "events": store.events()[:25], "default_prompt": store.DEFAULT_PROMPT, "ollama_key_set": bool(config.OLLAMA_API_KEY)}
 
 @app.put("/api/settings")
 def put_settings(body: dict):

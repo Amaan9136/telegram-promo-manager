@@ -3,6 +3,7 @@ sessions/
 *.session
 *.session-journal
 data/store.json
+data/log.json
 data/*.corrupt*
 data/*.tmp
 .venv/
@@ -18,3 +19,4 @@ Thumbs.db
 .idea/
 .vscode/
 PROMPTS.md
+repomix-output.*

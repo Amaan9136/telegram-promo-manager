@@ -7,7 +7,7 @@ Local-first admin console for Telegram **user-account** automation: schedule one
 ## How it works
 - **Broadcast:** you set *one* message, *one* repeat delay (default 10 min, any duration) and a list of destination groups. Each cycle sends to every enabled group, then waits the delay.
 - **Private messages:** a new user gets your greeting, then an AI reply built from your system prompt plus bounded recent history. Every conversation is visible in the admin inbox, and AI can be switched off globally or per user.
-- **State:** `data/store.json` (state), `.env` (secrets), `sessions/` (Telegram logins). All are gitignored.
+- **State:** `data/store.json` (state), `data/log.json` (activity log), `.env` (secrets), `sessions/` (Telegram logins). All are gitignored.
 
 | Broadcast cycle | Private message flow |
 |---|---|
@@ -28,7 +28,7 @@ Local Ollama instead of cloud: set `OLLAMA_URL=http://127.0.0.1:11434`, pull a m
 ## Responsible use and security
 - Only post where you have permission. Telegram may limit or ban accounts that send unsolicited promotion; the app reports FloodWaits but does not try to evade them.
 - There is **no web login**. Keep `HOST=127.0.0.1`; `0.0.0.0` exposes control of your Telegram account to your network.
-- Never commit `.env`, `sessions/` or `data/store.json`.
+- Never commit `.env`, `sessions/` or `data/store.json` or `data/log.json`.
 
 ## Contributing
 Read [CONTRIBUTING.md](CONTRIBUTING.md) for the code map and dev workflow. Issues and PRs are welcome.

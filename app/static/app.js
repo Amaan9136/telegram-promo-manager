@@ -7,6 +7,7 @@ const fmt=s=>{for(const[u,n]of[['hours',3600],['minutes',60]])if(s%n===0)return 
 let S,first=true;
 function render(){const b=S.broadcast,a=S.accounts,g=S.groups;
  const st=!b.enabled?'Stopped':b.paused?'Paused':'Running';
+ $('b-start').classList.toggle('on',b.enabled&&!b.paused);$('b-pause').classList.toggle('on',b.enabled&&b.paused);$('b-stop').classList.toggle('on',!b.enabled);
  const c=(k,v)=>`<div class="card"><b>${k}</b>${esc(v)}</div>`;
  $('dash').innerHTML=c('Accounts connected',`${a.filter(x=>x.status==='connected').length}/${a.length}`)+c('Groups (enabled/managed)',`${g.filter(x=>x.enabled).length}/${g.length}`)
   +c('Scheduler',st)+c('Repeat delay',fmt(b.delay_seconds))+c('Last broadcast',`${tm(b.last_run)} ${b.last_status?'· '+b.last_status:''}`)

@@ -8,7 +8,7 @@
 <section><h2>Broadcast</h2>
 <label>Message sent to every enabled group each cycle</label><textarea id="bmsg" rows="4"></textarea>
 <div class="row"><span>Repeat every</span><input id="bval" type="number" min="0" step="any"><select id="bunit"><option>seconds</option><option>minutes</option><option>hours</option></select><button onclick="saveB()">Save</button></div>
-<div class="row"><button onclick="ctl('start')">Start</button><button onclick="ctl('pause')">Pause</button><button onclick="ctl('resume')">Resume</button><button class="d" onclick="ctl('stop')">Stop</button></div>
+<div class="row"><button id="b-start" onclick="ctl('start')">Start</button><button id="b-pause" onclick="ctl('pause')">Pause</button><button id="b-resume" onclick="ctl('resume')">Resume</button><button id="b-stop" class="d" onclick="ctl('stop')">Stop</button></div>
 <p class="hint">One cycle sends to all enabled groups, then waits the delay. "Send test" does not affect the schedule.</p>
 <h3>Destination groups</h3><div class="row"><select id="sel"></select><button onclick="loadDialogs()">Load / refresh groups</button><button onclick="addSel()">Add selected</button></div>
 <div id="dialogs" class="chips"></div><div id="groups"></div></section>
