@@ -18,7 +18,7 @@ function render(){const b=S.broadcast,a=S.accounts,g=S.groups;
  const sel=$('sel'),cur=sel.value;sel.innerHTML=a.map(x=>`<option>${esc(x.name)}</option>`).join('');if(cur)sel.value=cur;
  $('groups').innerHTML=g.map(x=>`<div class="g row"><label class="inline"><input type="checkbox" ${x.enabled?'checked':''} onchange="tog('${x.account}',${x.id},this.checked)"> <b>${esc(x.title)}</b></label> <small>[${esc(x.account)}]</small>
   <small class="err">${esc(x.last_error||'')}</small><button onclick="test('${x.account}',${x.id})">Send test</button><button class="d" onclick="delG('${x.account}',${x.id})">Remove</button></div>`).join('')||'<p class="hint">No groups added.</p>';
- if(first){first=false;const s=S.settings;$('bmsg').value=b.message;
+ if(first){first=false;const s=S.settings;mlist(b.messages.length?b.messages:b.message?[b.message]:['']);
   const u=b.delay_seconds%3600===0?['hours',3600]:b.delay_seconds%60===0?['minutes',60]:['seconds',1];$('bval').value=b.delay_seconds/u[1];$('bunit').value=u[0];
   $('ai').checked=s.ai_enabled;$('gon').checked=s.greeting_enabled;$('greeting').value=s.greeting;$('prompt').value=s.system_prompt;$('prompt').placeholder=S.default_prompt;
   $('url').value=s.ollama_url;$('model').value=s.model;$('hist').value=s.history_limit;
@@ -34,7 +34,9 @@ async function addSel(){const g=[...document.querySelectorAll('#dialogs input:ch
 const tog=async(a,id,e)=>{await api('PUT',`/api/groups/${a}/${id}`,{enabled:e});load()};
 const delG=async(a,id)=>{await api('DELETE',`/api/groups/${a}/${id}`);load()};
 const test=async(a,id)=>{if(confirm('Send the broadcast message once to this group now?')){await api('POST','/api/broadcast/test',{account:a,group_id:id});alert('Sent')}};
-async function saveB(){await api('PUT','/api/broadcast',{message:$('bmsg').value,delay_value:$('bval').value,delay_unit:$('bunit').value});load()}
+const mlist=l=>{$('bmsgs').innerHTML=l.map(m=>`<div class="row"><textarea class="bm" rows="2">${esc(m)}</textarea><button class="d" onclick="this.parentNode.remove()">Remove</button></div>`).join('')};
+const addM=()=>$('bmsgs').insertAdjacentHTML('beforeend','<div class="row"><textarea class="bm" rows="2"></textarea><button class="d" onclick="this.parentNode.remove()">Remove</button></div>');
+async function saveB(){await api('PUT','/api/broadcast',{messages:[...document.querySelectorAll('.bm')].map(t=>t.value),delay_value:$('bval').value,delay_unit:$('bunit').value});load()}
 async function ctl(a){await api('POST','/api/broadcast/'+a);load()}
 async function saveS(){await api('PUT','/api/settings',{ai_enabled:$('ai').checked,greeting_enabled:$('gon').checked,greeting:$('greeting').value,system_prompt:$('prompt').value,ollama_url:$('url').value,model:$('model').value,history_limit:$('hist').value});load()}
 async function testO(k){$('ostat').textContent='Testing…';const r=await api('POST','/api/ollama/'+k);$('ostat').className=r.ok?'ok':'err';$('ostat').textContent=r.ok?r.message:r.error}

@@ -114,7 +114,9 @@ def del_group(account: str, gid: int):
 def put_broadcast(body: dict):
     def f(d):
         b = d["broadcast"]
-        if "message" in body: b["message"] = str(body["message"])
+        if "messages" in body:
+            if not isinstance(body["messages"], list): raise HTTPException(400, "Messages must be a list")
+            b["messages"] = [str(m).strip() for m in body["messages"] if str(m).strip()]; b["message"] = ""; b["pool"] = []
         if "delay_value" in body:
             try: secs = float(body["delay_value"]) * UNITS[body.get("delay_unit", "seconds")]
             except (TypeError, ValueError, KeyError): raise HTTPException(400, "Invalid delay")
@@ -135,7 +137,7 @@ def broadcast_ctl(action: str):
     def f(d):
         b = d["broadcast"]
         if action == "start":
-            if not b["message"].strip() or not any(g["enabled"] for g in d["groups"]): raise HTTPException(400, "Set a message and enable at least one group first")
+            if not (b["messages"] or b["message"].strip()) or not any(g["enabled"] for g in d["groups"]): raise HTTPException(400, "Add a message and enable at least one group first")
             b.update(enabled=True, paused=False, next_run=None)  # first cycle runs immediately
         elif action == "stop": b.update(enabled=False, paused=False, next_run=None)
         elif action == "pause":

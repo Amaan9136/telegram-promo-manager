@@ -6,7 +6,7 @@
 <div class="row"><input id="an" placeholder="Name (e.g. promo1)"><input id="ap" placeholder="+91..."><button onclick="addAcc()">Send code</button></div>
 <div class="row"><input id="ac" placeholder="Login code"><input id="apw" type="password" placeholder="2FA password (if asked)"><button onclick="verify()">Verify (uses name above)</button></div></section>
 <section><h2>Broadcast</h2>
-<label>Message sent to every enabled group each cycle</label><textarea id="bmsg" rows="4"></textarea>
+<label>Messages sent to every enabled group each cycle (picked randomly, each used once before any repeats)</label><div id="bmsgs"></div><div class="row"><button onclick="addM()">Add message</button></div>
 <div class="row"><span>Repeat every</span><input id="bval" type="number" min="0" step="any"><select id="bunit"><option>seconds</option><option>minutes</option><option>hours</option></select><button onclick="saveB()">Save</button></div>
 <div class="row"><button id="b-start" onclick="ctl('start')">Start</button><button id="b-pause" onclick="ctl('pause')">Pause</button><button id="b-resume" onclick="ctl('resume')">Resume</button><button id="b-stop" class="d" onclick="ctl('stop')">Stop</button></div>
 <p class="hint">One cycle sends to all enabled groups, then waits the delay. "Send test" does not affect the schedule.</p>

@@ -1,4 +1,4 @@
-import asyncio, glob, logging, os, re, time
+import asyncio, glob, logging, os, random, re, time
 from telethon import TelegramClient, events
 from telethon.errors import FloodWaitError, SessionPasswordNeededError
 from . import config, store, llm
@@ -123,21 +123,27 @@ async def send_test(account, group_id, text=None):
     """Independent of the schedule: touches no broadcast fields."""
     c = clients.get(account)
     if not c or not c.is_connected(): raise RuntimeError("Account is not connected")
-    msg = text or store.load()["broadcast"]["message"] or "Test message"
+    b = store.load()["broadcast"]; msg = text or (b["messages"] or [b["message"]])[0] or "Test message"
     await c.send_message(group_id, msg); store.log_event("info", f"Test message sent to {group_id} via '{account}'")
 
+def _pick(d):
+    b = d["broadcast"]; n = len(b["messages"]) or 1
+    b["pool"] = [i for i in b["pool"] if i < n] or list(range(n))
+    i = b["pool"].pop(random.randrange(len(b["pool"])))
+    return b["messages"][i] if b["messages"] else b["message"].strip()
+
 async def run_cycle():
-    d = store.load(); b = d["broadcast"]; msg = b["message"].strip(); ok = fail = 0; errs = []; blocked = set()
+    d = store.load(); b = d["broadcast"]; msgs = b["messages"] or ([b["message"].strip()] if b["message"].strip() else []); ok = fail = 0; errs = []; blocked = set()
     targets = [g for g in d["groups"] if g["enabled"]]
-    if not msg or not targets: errs.append("No message or no enabled groups")
-    for g in targets if msg else []:
+    if not msgs or not targets: errs.append("No message or no enabled groups")
+    for g in targets if msgs else []:
         cur = store.load()["broadcast"]
         if not cur["enabled"] or cur["paused"]: errs.append("Stopped/paused mid-cycle"); break
         if g["account"] in blocked: continue
         err = None; c = clients.get(g["account"])
         try:
             if not c or not c.is_connected(): raise RuntimeError("account not connected")
-            await c.send_message(g["id"], msg); ok += 1
+            await c.send_message(g["id"], store.mutate(_pick)); ok += 1
         except FloodWaitError as e:
             blocked.add(g["account"]); err = f"FloodWait {e.seconds}s from Telegram; account '{g['account']}' skipped for the rest of this cycle"
         except Exception as e: err = f"{type(e).__name__}: {e}"

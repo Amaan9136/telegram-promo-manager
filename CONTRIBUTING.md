@@ -28,7 +28,7 @@ Quick checks before a PR: `python -m compileall -q app` and `node --check app/st
 
 ## Rules
 - Keep it simple: no new framework, database or heavy dependency without discussion in an issue.
-- One broadcast message and one delay: do not add per-group schedules.
+- One broadcast delay: do not add per-group schedules.
 - No features that evade Telegram rate limits, FloodWait, moderation or detection (proxy/account rotation, human-behavior faking, auto-joining).
 - Never log or expose secrets. Do not commit `.env`, sessions, `store.json` or `log.json`.
 - Keep PRs small; describe what changed and how you tested it.
