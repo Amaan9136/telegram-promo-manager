@@ -109,7 +109,7 @@ def toggle_group(account: str, gid: int, body: dict):
 def del_group(account: str, gid: int):
     store.mutate(lambda d: d.update(groups=[g for g in d["groups"] if not (g["id"] == gid and g["account"] == account)])); return {"ok": True}
 
-# ----- broadcast: ONE message, ONE delay -----
+# ----- broadcast: Multiple messages, ONE delay -----
 @app.put("/api/broadcast")
 def put_broadcast(body: dict):
     def f(d):
